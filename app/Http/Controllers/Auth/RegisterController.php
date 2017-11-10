@@ -15,6 +15,7 @@ use Form;
 use View;
 use App\Repositories\SettingRepo;
 Use Plivo;
+use App\Helpers\EloquentHelper;
 
 class RegisterController extends Controller
 {
@@ -44,9 +45,12 @@ class RegisterController extends Controller
      * @return void
      */
     protected $setting_details;
+    protected $EloquentHelper;
     public function __construct()
     {
+        parent::__construct();
         $SettingRepo = new SettingRepo;
+        $this->EloquentHelper = new EloquentHelper();
         $this->setting_details = $SettingRepo->getBy(array('single'=>true));
         $this->middleware('guest');
     }
@@ -92,13 +96,13 @@ class RegisterController extends Controller
             'username' => '',
             'home_contact_ext' => $data['home_contact_ext'],
             'verified_by' => $data['verified_by'],
-            'platform' => 'art-of-elysium',
+            'platform' => isset($data['company_name'])?$data['company_name']:'art-of-elysium',
             'home_contact_num' => $data['home_contact_num'],
             'verified' => '0',
+            'customer_id' => isset($data['customer_id'])?$data['customer_id']:'0',
             'email_token' =>  $token,
         ]);
         $user->attachRole('2');
-
         return $user;
     }
 
@@ -116,8 +120,9 @@ class RegisterController extends Controller
         // Laravel validation
         $validator = $this->validator($request->all());
         if ($validator->fails()) 
-        {
-            return redirect('register')
+        {   
+            $back_url = isset($inputs['company_number'])?'register?CompanyNumber='.$inputs['company_number']:'register';
+            return redirect($back_url)
                         ->withErrors($validator)
                         ->withInput();
             //$this->throwValidationException($request, $validator);
@@ -126,34 +131,50 @@ class RegisterController extends Controller
                             ->where('last_name','=',$request->get('last_name'))
                             ->where('email','=',$request->get('email'))
                             ->first();
-        //if (!empty($user_exists) && $user_exists->status=='completed' ) {
-        if (!empty($user_exists) && !empty($user_exists->contact_id) ) {
-            $salesforce_dashboard_url = str_replace('[CONTACT_ID]', $user_exists->contact_id, $this->setting_details->salesforce_application_page_url);
-             $salesforce_dashboard_url = str_replace('[UID]', $user_exists->id, $salesforce_dashboard_url);
+        
+        $securityToken = $this->EloquentHelper->generateSecurityToken();
+
+        if (!empty($user_exists) && !empty($user_exists->contact_id) && strtolower($user_exists->status) == 'completed' ) {
+            
+            $salesforce_dashboard_url = str_replace('[CONTACT_ID]', $user_exists->contact_id, $this->setting_details->salesforce_dashboard_url);
+            $salesforce_dashboard_url = str_replace('[UID]', $user_exists->id, $salesforce_dashboard_url);
             $salesforce_dashboard_url = str_replace('[FNAME]', $user_exists->first_name, $salesforce_dashboard_url);
             $salesforce_dashboard_url = str_replace('[LNAME]', $user_exists->last_name, $salesforce_dashboard_url);
             $salesforce_dashboard_url = str_replace('[EMAIL]', $user_exists->email, $salesforce_dashboard_url);
             $salesforce_dashboard_url = ($user_exists->verified_by==2)?str_replace('[PHONE]', $user_exists->home_contact_num, $salesforce_dashboard_url):str_replace('[PHONE]', '', $salesforce_dashboard_url);
             
+            $salesforce_dashboard_url = $salesforce_dashboard_url.'&DAIS_tag='.$securityToken;
+
             return redirect($salesforce_dashboard_url);   
         }elseif (!empty($user_exists)) {
             //$salesforce_application_page_url = str_replace('[CONTACT_ID]', $user_exists->contact_id, $this->setting_details->salesforce_application_page_url);
-            $salesforce_application_page_url = str_replace('&id=[CONTACT_ID]', $user_exists->contact_id, $this->setting_details->salesforce_application_page_url);
+            $salesforce_application_page_url = str_replace('&id=[CONTACT_ID]', '', $this->setting_details->salesforce_application_page_url);
             $salesforce_application_page_url = str_replace('[FNAME]', $user_exists->first_name, $salesforce_application_page_url);
             $salesforce_application_page_url = str_replace('[LNAME]', $user_exists->last_name, $salesforce_application_page_url);
             $salesforce_application_page_url = str_replace('[EMAIL]', $user_exists->email, $salesforce_application_page_url);
             $salesforce_application_page_url = str_replace('[UID]', $user_exists->id, $salesforce_application_page_url);
             $salesforce_application_page_url = ($user_exists->verified_by==2)?str_replace('[PHONE]', $user_exists->home_contact_num, $salesforce_application_page_url):str_replace('[PHONE]', '', $salesforce_application_page_url);
 
+            $salesforce_application_page_url = $salesforce_application_page_url.'&DAIS_tag='.$securityToken;
+
             return redirect($salesforce_application_page_url);
-            //return redirect('http://sandbox1-theartofelysium.cs14.force.com/VolunteerApplicationVFpage3?profile=false&id='.$user_exists->contact_id);
+
         }else{
             $user = $this->create($inputs);
             if($request['verified_by'] == 2) {
                 $this->send_sms($request['home_contact_num'],$user->email_token, $user->name);
-                return redirect('code_verification/'.base64_encode($user->id));
+                
+                $url = 'code_verification/'.base64_encode($user->id);
+                if ($request->has('company_number')) {
+                    $url = 'code_verification/'.base64_encode($user->id).'?CompanyNumber='.$request->get('company_number');
+                }
+                return redirect($url);
             } else {
-                $email = new EmailVerification(new User(['email_token' => $user->email_token, 'name' => $user->name]));
+                /*$user_ary = ['email_token' => $user->email_token, 'name' => $user->name];
+                if ($request->has('company_number')) {
+                    $user_ary['company_number'] = $request->company_number;
+                }*/
+                $email = new EmailVerification($inputs,new User(['email_token' => $user->email_token, 'name' => $user->name]));
                 Mail::to($user->email)->send($email);
             }
             $msg = 'Registration Successful.   Please check your email for verification instructions.';
@@ -177,7 +198,7 @@ class RegisterController extends Controller
                 return view('auth.verify')
                         ->with('user',$user);
             }
-            return redirect('login')->with('error','You Are Already verified or token not found in our records.');
+            return back()->with('error','You Are Already verified or token not found in our records.');
         }
         return back()->with('error','Please Insert Token ');
     }
@@ -196,11 +217,14 @@ class RegisterController extends Controller
                         ->withInput();
             //$this->throwValidationException($request, $validator);
         }
-        
-        User::where('id','=',$id)->update(['username' => $data['username'],'password' => bcrypt($data['password'])]);
+        $securityToken = $this->EloquentHelper->generateSecurityToken();
+        User::where('id','=',$id)->update([
+            'username' => $data['username'],
+            'password' => bcrypt($data['password'])
+        ]);
         User::where('id',$id)->firstOrFail()->verified();
         $user = User::where('id',$id)->first();
-        Auth::loginUsingId($id);
+        //Auth::loginUsingId($id);
         $salesforce_application_page_url = str_replace('&id=[CONTACT_ID]', '', $this->setting_details->salesforce_application_page_url);
 
         $salesforce_application_page_url = str_replace('[FNAME]', $user->first_name, $salesforce_application_page_url);
@@ -208,9 +232,9 @@ class RegisterController extends Controller
         $salesforce_application_page_url = str_replace('[EMAIL]', $user->email, $salesforce_application_page_url);
         $salesforce_application_page_url = str_replace('[UID]',$id, $salesforce_application_page_url);
         $salesforce_application_page_url = ($user->verified_by==2)?str_replace('[PHONE]', $user->home_contact_num, $salesforce_application_page_url):str_replace('[PHONE]', '', $salesforce_application_page_url);
+        $salesforce_application_page_url = $salesforce_application_page_url.'&DAIS_tag='.$securityToken;
 
         return redirect($salesforce_application_page_url);
-        //return redirect('http://sandbox1-theartofelysium.cs14.force.com/VolunteerApplicationVFpage3?profile=false&id=');
     }
     
     /**
@@ -313,14 +337,20 @@ class RegisterController extends Controller
     * this function use for resend mobile activation token
     * @return 
     */
-    public function resendActivationToken($user_id='')
+    public function resendActivationToken(Request $request,$user_id='')
     {
         if ($user_id) {
             $user_id = base64_decode($user_id);
             $user = User::find($user_id);
             if (!empty($user)) {
                 $this->send_sms($user->home_contact_num,$user->email_token,$user->name);
-                return redirect('code_verification/'.base64_encode($user_id))
+
+                $url = 'code_verification/'.base64_encode($user_id);
+                if ($request->has('CompanyNumber')) {
+                    $url='code_verification/'.base64_encode($user_id).'?CompanyNumber='.$request->get('CompanyNumber');
+                }
+
+                return redirect($url)
                         ->with('success','Token sent again Successfully');
             }
         }       
@@ -330,17 +360,28 @@ class RegisterController extends Controller
     * this function use for resend mobile activation token
     * @return 
     */
-    public function resendActivationEmail($user_id='')
+    public function resendActivationEmail(Request $request,$user_id='')
     {
         if ($user_id) {
+            $inputs = $request->all();
             $user_id = base64_decode($user_id);
+            
             $user = User::find($user_id);
             if (!empty($user)) {
                 $_REQUEST['first_name'] = $user->first_name;
                 $_REQUEST['last_name'] = $user->last_name;
-                $email = new EmailVerification(new User(['email_token' => $user->email_token, 'name' => $user->name]));
+                $user_ary = ['email_token' => $user->email_token, 'name' => $user->name];
+                
+                $url='code_verification/'.base64_encode($user_id);
+                if ($request->has('CompanyNumber')) {
+                    //$user_ary['company_number'] = $request->company_number;
+                    $url='code_verification/'.base64_encode($user_id).'?CompanyNumber='.$request->get('CompanyNumber');
+                    $inputs['company_number'] = $inputs['CompanyNumber'];
+                }
+                
+                $email = new EmailVerification($inputs,new User($user_ary));
                 Mail::to($user->email)->send($email);
-                return redirect('code_verification/'.base64_encode($user_id))
+                return redirect($url)
                         ->with('success','Please check your mailbox for activation link');
             }
         }       

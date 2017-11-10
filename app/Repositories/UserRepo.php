@@ -9,12 +9,12 @@ class UserRepo
 {
 	public function getBy($params = array())
 	{
-            $query = DB::table('users')->leftjoin("role_user","users.id","=","role_user.user_id");
+            $query = DB::table('users')/*->leftjoin("role_user","users.id","=","role_user.user_id")*/;
 
             $query->select(array(
 	           	'users.*',
-	           	"role_user.role_id",
-	           	"customers.company_name",
+	           	//"role_user.role_id",
+	           	DB::raw('CONCAT(customers.company_name, "[",company_number,"]") AS company_name'),
 	           	"customers.company_number"
 	        ))
 	        ->leftjoin('customers',function($join){

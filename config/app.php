@@ -187,7 +187,7 @@ return [
         Skovmand\Mailchimp\MailchimpServiceProvider::class,
         Spatie\Activitylog\ActivitylogServiceProvider::class,
         Lakshmaji\Plivo\PlivoServiceProvider::class,
-
+        Yajra\DataTables\DatatablesServiceProvider::class,
     ],
 
     /*
@@ -245,6 +245,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'Plivo' => Lakshmaji\Plivo\Facade\Plivo::class,
+        'Datatables' => Yajra\DataTables\Facades\DataTables::class,
     ],
 
 ];

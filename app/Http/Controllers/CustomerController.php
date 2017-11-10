@@ -8,11 +8,17 @@ use Auth;
 use Response;
 use App\Customer;
 use DB;
+use Datatables;
+use Html;
+use Form;
 
 class CustomerController extends Controller
 {
     private $view_path;
     protected $CustomerRepo;
+    protected $contact_phone_type;
+    protected $license_type;
+    protected $maximum_licensed_users;
 
     public function __construct(Request $request,CustomerRepo $CustomerRepo)
     {
@@ -20,18 +26,18 @@ class CustomerController extends Controller
         $this->CustomerRepo = $CustomerRepo;
         $this->ctrl_url = 'customer';
         $this->view_path = 'admin.customer';
-        $contact_phone_type = config('customer.contact_phone_type');
-        $license_type = config('customer.license_type');
-        $maximum_licensed_users = config('customer.maximum_licensed_users');
+        $this->contact_phone_type = config('customer.contact_phone_type');
+        $this->license_type = config('customer.license_type');
+        $this->maximum_licensed_users = config('customer.maximum_licensed_users');
         
         View::share([
             'ctrl_url'=>$this->ctrl_url,
             'view_path'=>$this->view_path,
             'module_name'=> 'Company',
             'title'=>'Company',
-            'contact_phone_type' => $contact_phone_type,
-            'license_type' => $license_type,
-            'maximum_licensed_users' => $maximum_licensed_users,
+            'contact_phone_type' => $this->contact_phone_type,
+            'license_type' => $this->license_type,
+            'maximum_licensed_users' => $this->maximum_licensed_users,
         ]);
     }
 
@@ -40,7 +46,7 @@ class CustomerController extends Controller
     // Output : return index view
     public function index(Request $request)
     {
-    	$param['filter'] = $request->input("filter", array());
+/*    	$param['filter'] = $request->input("filter", array());
         $param['sort'] = $request->input("sort", array('created_at'=>'desc'));
         $param['paginate'] = TRUE;
         if($request->input('filter.name.value')){
@@ -53,8 +59,8 @@ class CustomerController extends Controller
         $srno = ($request->input('page', 1) - 1) * config("setup.par_page", 10)  + 1;
 
         $compact = compact('items','srno');
-
-        return view($this->view_path . '.index',$compact)
+*/
+        return view($this->view_path . '.index'/*,$compact*/)
                 ->with('title', 'list');
     }
 
@@ -167,5 +173,42 @@ class CustomerController extends Controller
     public function createSecretKey()
     {
         echo  md5(microtime().rand());
+    }
+    public function getDatas()
+    {
+        $customer = $this->CustomerRepo->getBy([]);
+        
+        return Datatables::of($customer)
+            ->editColumn('contact_phone_type', function ($customer) {
+                return $this->contact_phone_type[$customer->contact_phone_type]??'';
+            })
+            ->editColumn('maximum_licensed_users', function ($customer) {
+                return $this->maximum_licensed_users[$customer->maximum_licensed_users]??'';
+            })
+            ->addColumn('company_url', function ($customer) {
+                return '<a target="_blank" href=https://taoe.ddslis.com/2VaYeJ1U?CompanyNumber='.encrypt($customer->company_number).' >https://taoe.ddslis.com/2VaYeJ1U?CompanyNumber='.encrypt($customer->company_number).'</a> <hr/> <a target="_blank" href=https://taoe.ddslis.com/2VaYeJ1U/register?CompanyNumber='.encrypt($customer->company_number).' >https://taoe.ddslis.com/2VaYeJ1U/register?CompanyNumber='.encrypt($customer->company_number).'</a>';
+            })
+            ->editColumn('license_type', function ($customer) {
+                return $this->license_type[$customer->license_type]??'';
+            })
+            ->editColumn('license_valid', function ($customer) {
+                return $customer->license_valid?'Valid':'Invalid';
+            })
+            ->addColumn('action', function ($customer) {
+                
+                $form =  Html::decode(Form::open(["url" => url("customer/$customer->id"),"method"=>"delete"]));
+                
+                if (empty($customer->is_converted_user))
+                    $convert = '<a href=customer/'.$customer->id.'/convert-to-user class="btn btn-small btn-warning"><span class="glyphicon glyphicon-user"></span></a>';
+                else
+                    $convert = '<a href="#" class="btn btn-small btn-success"><span class="glyphicon glyphicon-user"></span></a>';
+                
+                return $form.'<a href=customer/'.$customer->id.'/edit class="btn btn-small btn-primary"><span class="glyphicon glyphicon-pencil"></span></a>
+                            <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>
+                            '.$convert.'
+                        </form>';
+            })
+            ->rawColumns(['company_url','action'])
+            ->make(true);
     }
 }

@@ -88,9 +88,13 @@ $style = [
                                                     <td align="center">
                                                         <?php
                                                             $actionColor = 'button--blue';
+                                                            $url = 'register/verify/'.$user->email_token;
+                                                            
+                                                            if (isset($data['company_number'])){
+                                                                $url = 'register/verify/'.$user->email_token.'?CompanyNumber='.$data['company_number'];
+                                                            }
                                                         ?>
-
-                                                        <a href="{{ url('register/verify/'.$user->email_token) }}"
+                                                        <a href="{{ url($url) }}"
                                                             style="{{ $fontFamily }} {{ $style['button'] }} {{ $style[$actionColor] }}"
                                                             class="button"
                                                             target="_blank">

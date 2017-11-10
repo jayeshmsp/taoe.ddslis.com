@@ -11,7 +11,10 @@ use Illuminate\Http\Request;
 use DirkGroenen\Pinterest\Pinterest;
 use Illuminate\Support\Facades\Redis;
 use DB;
+use App\Customer;
 use App\Repositories\SettingRepo;
+use App\Helpers\EloquentHelper;
+use Illuminate\Contracts\Auth\Guard;
 
 class LoginController extends Controller
 {
@@ -44,8 +47,10 @@ class LoginController extends Controller
     protected $setting_details;
     public function __construct()
     {
+        parent::__construct();
         $this->pinterest = new Pinterest(config('services.pinterest.client_id'), config('services.pinterest.client_secret'));
         $SettingRepo = new SettingRepo;
+        $this->EloquentHelper = new EloquentHelper();
         $this->setting_details = $SettingRepo->getBy(array('single'=>true));
         $this->middleware('guest')->except('logout');
     }
@@ -137,12 +142,15 @@ class LoginController extends Controller
     */
     protected function credentials(Request $request)
     {
-        return [
+        $credentials_ary = [
             'username' => $request->username,
             'password' => $request->password,
             'verified' => '1',
         ];
-
+        if ($request->has('customer_id')) {
+            $credentials_ary['customer_id'] = $request->customer_id;
+        }
+        return $credentials_ary;
     }
 
     /**
@@ -157,16 +165,22 @@ class LoginController extends Controller
         if($role->role_id == 1) {
             return redirect("/");
         }
+        
+        Auth::logout();
+
+        $securityToken = $this->EloquentHelper->generateSecurityToken();
         //if (strtolower($user->status)=='completed') {
-        if (!empty($user->contact_id)) {
-            //$salesforce_dashboard_url = str_replace('[CONTACT_ID]', $user->contact_id, $this->setting_details->salesforce_dashboard_url);
-            $salesforce_dashboard_url = str_replace('[CONTACT_ID]', $user->contact_id, $this->setting_details->salesforce_application_page_url);
+        if (!empty($user->contact_id) && strtolower($user->status)=='completed' ) {
+            $salesforce_dashboard_url = str_replace('[CONTACT_ID]', $user->contact_id, $this->setting_details->salesforce_dashboard_url);
+            //$salesforce_dashboard_url = str_replace('[CONTACT_ID]', $user->contact_id, $this->setting_details->salesforce_application_page_url);
             $salesforce_dashboard_url = str_replace('[UID]', $user->id, $salesforce_dashboard_url);
             $salesforce_dashboard_url = str_replace('[FNAME]', $user->first_name, $salesforce_dashboard_url);
             $salesforce_dashboard_url = str_replace('[LNAME]', $user->last_name, $salesforce_dashboard_url);
             $salesforce_dashboard_url = str_replace('[EMAIL]', $user->email, $salesforce_dashboard_url);
             $salesforce_dashboard_url = ($user->verified_by==2)?str_replace('[PHONE]', $user->home_contact_num, $salesforce_dashboard_url):str_replace('[PHONE]', '', $salesforce_dashboard_url);
-      
+            
+            $salesforce_dashboard_url = $salesforce_dashboard_url.'&DAIS_tag='.$securityToken;
+
             return redirect($salesforce_dashboard_url);   
         }
         //$salesforce_application_page_url = str_replace('[CONTACT_ID]', $user->contact_id, $this->setting_details->salesforce_application_page_url);
@@ -176,7 +190,20 @@ class LoginController extends Controller
         $salesforce_application_page_url = str_replace('[LNAME]', $user->last_name, $salesforce_application_page_url);
         $salesforce_application_page_url = str_replace('[EMAIL]', $user->email, $salesforce_application_page_url);
         $salesforce_application_page_url = ($user->verified_by==2)?str_replace('[PHONE]', $user->home_contact_num, $salesforce_application_page_url):str_replace('[PHONE]', '', $salesforce_application_page_url);
+        
+        $salesforce_application_page_url = $salesforce_application_page_url.'&DAIS_tag='.$securityToken;
+
         return redirect($salesforce_application_page_url);
+    }
+
+    /**
+     * Show the application's login form.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function showLoginForm(Request $request)
+    {
+        return view('auth.login');
     }
 
     /**
@@ -223,10 +250,15 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-    	if(!isset(Auth::user()->id)) 
-    		return redirect('/');
+        if(isset($_COOKIE['securityToken'])){
+            unset($_COOKIE['securityToken']);
+            setcookie('securityToken', '', time() - 3600); 
+        }
+
+    	/*if(!isset(Auth::user()->id)) 
+    		return redirect('/');*/
     	
-        $user_id = Auth::user()->id;
+        $user_id = isset(Auth::user()->id)?Auth::user()->id:'';
 
         $this->guard()->logout();
         $request->session()->flush();

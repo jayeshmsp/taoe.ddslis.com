@@ -12,7 +12,7 @@
                     </a>
                     </h3>
                 </div>
-                @include('users.permission.partials.search')
+                {{-- @include('users.permission.partials.search') --}}
                 <table id="example1" class="table table-striped table-bordered table-condensed">
                     @if($items->count())
                     <thead>

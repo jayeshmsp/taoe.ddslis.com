@@ -47,6 +47,9 @@ class ForgotPasswordController extends Controller
         // need to show to the user. Finally, we'll send out a proper response.
         
         $reset_user = User::where('email','=',$request->get('email'))->where('username','=',$request->get('username'))->first();
+        
+        \DB::table('password_resets')->where('email','=',$request->get('email'))->delete();
+        
         if (!empty($reset_user)) {
             
             $request->session()->forget('reset_first_name');
@@ -55,7 +58,8 @@ class ForgotPasswordController extends Controller
             session([
                 'reset_first_name' => (isset($reset_user->first_name)?$reset_user->first_name:''),
                 'reset_last_name' => (isset($reset_user->last_name)?$reset_user->last_name:''),
-                'reset_username' => (isset($reset_user->username)?$reset_user->username:'')
+                'reset_username' => (isset($reset_user->username)?$reset_user->username:''),
+                'reset_user_id' => (isset($reset_user->id)?$reset_user->id:''),
             ]);
         }
         

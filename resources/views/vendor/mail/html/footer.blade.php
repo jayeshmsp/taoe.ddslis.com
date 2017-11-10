@@ -3,7 +3,7 @@
         <table class="footer" align="center" width="570" cellpadding="0" cellspacing="0">
             <tr>
                 <td class="content-cell" align="center">
-                    {{ Illuminate\Mail\Markdown::parse($slot) }}
+                    <a target="_blank" href="theartofelysium.org"> {{ Illuminate\Mail\Markdown::parse($slot) }} </a>
                 </td>
             </tr>
         </table>

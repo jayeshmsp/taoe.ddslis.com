@@ -17,7 +17,7 @@
                     <input type="hidden" name="token" value="{{ $token }}">
                <div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }} {{ $errors->has('last_name') ? ' has-error' : '' }}">
                     <div class="col-xs-6">
-                        <input id="first_name" type="text" class="form-control" placeholder="First Name" name="first_name" value="{{ old('first_name') }}" required autofocus>
+                        <input id="first_name" type="text" class="form-control" readonly="readonly" placeholder="First Name" name="first_name" value="{{ old('first_name',isset($user_details['first_name'])?$user_details['first_name']:'' ) }}" required>
                         @if ($errors->has('first_name'))
                         <span class="help-block">
                             <strong>{{ $errors->first('first_name') }}</strong>
@@ -25,7 +25,7 @@
                         @endif
                     </div>
                     <div class="col-xs-6">
-                        <input id="last_name" type="text" class="form-control" name="last_name" value="{{ old('last_name') }}" required autofocus placeholder="Last Name">
+                        <input id="last_name" type="text" class="form-control" readonly="readonly" name="last_name" value="{{ old('last_name',isset($user_details['last_name'])?$user_details['last_name']:'' ) }}" required placeholder="Last Name">
                         @if ($errors->has('last_name'))
                         <span class="help-block">
                             <strong>{{ $errors->first('last_name') }}</strong>
@@ -36,7 +36,7 @@
                     
                     <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                         <div class="col-xs-12">
-                            <input id="email" placeholder="E-Mail Address" type="email" class="form-control" name="email" value="{{ $email or old('email') }}" required autofocus>
+                            <input id="email" placeholder="E-Mail Address" type="email" readonly="readonly" class="form-control" name="email" value="{{ old('email',isset($user_details['email'])?$user_details['email']:'' ) }}" required>
                             @if ($errors->has('email'))
                             <span class="help-block">
                                 <strong>{{ $errors->first('email') }}</strong>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
                         <div class="col-xs-12">
-                            <input id="password" placeholder="Password" type="password" class="form-control" name="password" required>
+                            <input id="password" placeholder="Password" type="password" class="form-control" name="password" autofocus required>
                             @if ($errors->has('password'))
                             <span class="help-block">
                                 <strong>{{ $errors->first('password') }}</strong>
@@ -56,7 +56,7 @@
                     </div>
                     <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
                         <div class="col-xs-12">
-                            <input id="password-confirm" placeholder="Confirm Password" type="password" class="form-control" name="password_confirmation" required>
+                            <input id="password-confirm" placeholder="Confirm Password" type="password" class="form-control" name="password_confirmation" autofocus required>
                             @if ($errors->has('password_confirmation'))
                             <span class="help-block">
                                 <strong>{{ $errors->first('password_confirmation') }}</strong>

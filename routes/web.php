@@ -14,7 +14,7 @@
 /*Route::get('/', function () {
     return view('auth.login');
 });*/
-
+Route::get('/', '\App\Http\Controllers\Auth\LoginController@showLoginForm');
 Auth::routes();
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('register/verify/{token}', 'Auth\RegisterController@verify'); 
@@ -40,32 +40,38 @@ Route::post('subscribe',['as'=>'subscribe','uses'=>'MailChimpController@subscrib
 Route::post('sendCompaign',['as'=>'sendCompaign','uses'=>'MailChimpController@sendCompaign']);
 
 /*USER MANAGEMENT*/
-Route::group(['middleware' => ['role:admin|user']], function()
+Route::group(['middleware' => ['role:admin|user','securityTokenCheck']], function()
 {
 	/*PROFILE*/
-        Route::get('/', 'UserController@index')->name('home');
+	Route::get('user/getDatas','UserController@getDatas');
+    //Route::get('/', 'UserController@index')->name('home');
 	Route::get('user/profile','UserController@profile');
 	Route::post('user/profile','UserController@postProfile');
 
-	Route::resource('user','UserController');
 
-	Route::post('customer/create-secret-key','CustomerController@createSecretKey');
-	Route::resource('customer','CustomerController');
-
-	Route::resource('role','RoleController');
-	Route::resource('permission','PermissionController');
-	Route::get('role/{id}/permission', 'RoleController@permissions');
-	Route::post('role/{id}/permission', 'RoleController@permissionsStore');
+	
 
 	Route::post('chat/upload', 'ChatController@upload');
 	Route::resource('chat', 'ChatController');
-        Route::get("user/destroy/{id}",'UserController@destroy');
         
 
 });
 
 /*ADMIN ROUTE*/
 Route::group(['middleware' => ['role:admin']], function(){
+
+	Route::post('customer/create-secret-key','CustomerController@createSecretKey');
+	Route::get('customer/getDatas','CustomerController@getDatas');
+	Route::resource('customer','CustomerController');
+
+	Route::resource('user','UserController');
+	Route::resource('role','RoleController');
+    Route::get("user/destroy/{id}",'UserController@destroy');
+	Route::resource('permission','PermissionController');
+	Route::get('role/{id}/permission', 'RoleController@permissions');
+	Route::post('role/{id}/permission', 'RoleController@permissionsStore');
+
+
 	Route::get('logs','SettingController@logs');
 	Route::resource('setting','SettingController');
 	Route::post('change-password','UserController@resetPassword');

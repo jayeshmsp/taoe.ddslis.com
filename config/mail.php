@@ -16,8 +16,7 @@ return [
     |
     */
 
-    //'driver' => env('MAIL_DRIVER', 'smtp'),
-    'driver' => 'sparkpost',
+    'driver' => env('MAIL_DRIVER', 'smtp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,7 +29,7 @@ return [
     |
     */
 
-    'host' => 'smtp.sparkpostmail.com',
+    'host' => env('MAIL_HOST', 'smtp.gmail.com'),
 
     /*
     |--------------------------------------------------------------------------
@@ -43,9 +42,8 @@ return [
     |
     */
 
-    //'port' => env('MAIL_PORT', 587),
-    'port' => 587,
-
+    'port' => env('MAIL_PORT', 587),
+    
     /*
     |--------------------------------------------------------------------------
     | Global "From" Address
@@ -58,9 +56,8 @@ return [
     */
 
     'from' => [
-        //'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'address' => 'lculp@ddslis.com',
-        'name' => env('MAIL_FROM_NAME', 'Art of elysium'),
+        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'name' => env('MAIL_FROM_NAME', 'The Art of Elysium'),
     ],
 
     /*
@@ -74,9 +71,8 @@ return [
     |
     */
 
-    //'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-    'encryption' => 'STARTTLS',
-
+    'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+    
     /*
     |--------------------------------------------------------------------------
     | SMTP Server Username
@@ -88,9 +84,9 @@ return [
     |
     */
 
-    'username' => 'SMTP_Injection',
+    'username' => 'artisan30808@gmail.com',
 
-    'password' => '93ffbfbbe11f35dac3da118a90ddd90ffcd77374',
+    'password' => 'man30808',
 
     /*
     |--------------------------------------------------------------------------

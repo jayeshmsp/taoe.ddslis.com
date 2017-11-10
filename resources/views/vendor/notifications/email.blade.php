@@ -34,7 +34,11 @@
             $color = 'blue';
     }
 ?>
+@if (\Session::has('reset_user_id'))
+@component('mail::button', ['url' => $actionUrl.'?q='.encrypt(\Session::get('reset_user_id')), 'color' => $color])
+@else
 @component('mail::button', ['url' => $actionUrl, 'color' => $color])
+@endif
 {{ $actionText }}
 @endcomponent
 @endisset

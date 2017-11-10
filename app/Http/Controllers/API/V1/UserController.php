@@ -75,18 +75,33 @@ class UserController extends Controller
             return $this->content;
 
         }
+        $customers = '';
         $token_exits = DB::table('api_token')->where('client_secret','=',$inputs['ClientSecret'])->first();
         if (empty($token_exits)) {
             $this->content['error'] = "Unauthorised : Please provide valid ClientSecret.";
             return $this->content;
         }
+        
+        //TEMP CONDITION FOR COMPANY NUMBER
+        /*$customers = DB::table('customers')
+                    ->where('id','=',$token_exits->customer_id)
+                    ->where('company_number','=',isset($inputs['CompanyNumber'])?$inputs['CompanyNumber']:'')
+                    ->first();
+
+        if (empty($customers)) {
+            $this->content['error'] = "Unauthorised : Please provide valid CompanyNumber.";
+            return $this->content;    
+        }*/
+
+
+
         if (isset($inputs['FirstName']) && isset($inputs['LastName']) && isset($inputs['EmailAddress']) ) {
             if (!empty($inputs['FirstName']) && !empty($inputs['LastName']) && !empty($inputs['EmailAddress']) ) {
                 //SEARCH USER
                 $user_exists = User::where('first_name','=',$inputs['FirstName'])->where('last_name', '=', $inputs['LastName'])->where('email', '=' ,$inputs['EmailAddress'])->first();
                 if (!empty($user_exists)) {
                     $this->content['UserID'] = $user_exists->id;
-                    $this->content['ContactID'] = $inputs['ContactID'];
+                    $this->content['ContactID'] = (isset($inputs['ContactID'])?$inputs['ContactID']:'');
                     $this->content['ResultCode'] = 1;
                 }else{
                     //CREATE USER
@@ -167,6 +182,16 @@ class UserController extends Controller
             $this->content['error'] = "Unauthorised : Please provide valid ClientSecret.";
             return $this->content;
         }
+
+        /*$customers = DB::table('customers')
+                    ->where('id','=',$token_exits->customer_id)
+                    ->where('company_number','=',isset($inputs['CompanyNumber'])?$inputs['CompanyNumber']:'')
+                    ->first();;
+
+        if (empty($customers)) {
+            $this->content['error'] = "Unauthorised : Please provide valid CompanyNumber.";
+            return $this->content;    
+        }*/
         
         /*USER ID COMPARSORY*/
         /*USER ID COMPARSORY*/
@@ -239,6 +264,17 @@ class UserController extends Controller
             $this->content['error'] = "Unauthorised : Please provide valid ClientSecret.";
             return $this->content;
         }
+        
+        //TEMP CONDITION FOR COMPANY NUMBER
+        /*$customers = DB::table('customers')
+                    ->where('id','=',$token_exits->customer_id)
+                    ->where('company_number','=',isset($inputs['CompanyNumber'])?$inputs['CompanyNumber']:'')
+                    ->first();
+
+        if (empty($customers)) {
+            $this->content['error'] = "Unauthorised : Please provide valid CompanyNumber.";
+            return $this->content;    
+        }*/
         
         /*USER ID COMPARSORY*/
         if (!isset($inputs['UserID'])) {

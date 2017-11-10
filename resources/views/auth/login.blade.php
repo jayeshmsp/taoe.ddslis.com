@@ -11,13 +11,18 @@
                     {{ $message }}
                 </div>
             @endif
-            <h3 class="box-title m-b-0">Volunteer Login</h3>
+            <h3 class="box-title m-b-0"> {{isset($customer_details->company_name)?$customer_details->company_name:''}} Volunteer Login</h3>
             <small>Enter your details below</small>
             <form class="form-horizontal new-lg-form" role="form" id="loginform" method="POST" action="{{ route('login') }}">
                 {{ csrf_field() }}
                 <div class="form-group {{ $errors->has('username') ? ' has-error' : '' }} m-t-20">
                     <div class="col-xs-12">
                         <input placeholder="Username" id="username" type="text" class="form-control" name="username" value="{{ old('username') }}" required autofocus>
+                        @if (isset($customer_details) && !empty($customer_details) )
+                            {!! Form::hidden('customer_id', $customer_details->id) !!}
+                            {!! Form::hidden('company_number', $customer_details->company_number) !!}
+                        @endif
+
                         @if ($errors->has('username'))
                         <span class="help-block">
                             <strong>{{ $errors->first('username') }}</strong>
@@ -57,17 +62,25 @@
                         </div> --}}
                         
                     </div>
-                    <div class="form-group text-center m-t-20">
+                    <div class=" text-center m-t-20">
+                        <div class="row">
                         <div class="col-xs-12">
                             <button class="btn btn-info btn-lg btn-block btn-rounded text-uppercase waves-effect waves-light" type="submit">Log In</button>
                         </div>
+                        </div>
                     </div>
-                     <div class="form-group">
-                    <div class="col-md-12">
+                     <div>
+                     <div class="row">
+                    <div class="col-md-12 col-xs-12 m-t-10">
                         {{-- <div class="pull-left p-t-0">
                             <label for="checkbox-signup"><a href="{{ url('manageMailChimp') }}"> MailChimp Demo </a> </label>
                         </div> --}}
-                        <a href="{{ route('password.request') }}" class="text-dark pull-right"><i class="fa fa-lock m-r-5"></i> Forgot password?</a> </div>
+                        @if (isset($customer_details->company_number))
+                            <a href="{{ url('password/reset?CompanyNumber='.$customer_details->company_number) }}" class="text-dark pull-right"><i class="fa fa-lock m-r-5"></i> Forgot password?</a> </div>
+                        @else
+                            <a href="{{ url('password/reset') }}" class="text-dark pull-right"><i class="fa fa-lock m-r-5"></i> Forgot password?</a> </div>
+                        @endif
+                    </div>
                     </div>
                     {{-- 
                     <div class="row">
@@ -91,9 +104,9 @@
                             </div>
                         </div>
                     </div> --}}
-                    <div class="form-group m-b-0">
+                    <div class="form-group m-b-0 m-t-5">
                         <div class="col-sm-12 text-center">
-                            <p>Don't have an account? <a href="{{ route('register') }}" class="text-primary m-l-5"><b>Sign Up</b></a></p>
+                            <p>Don't have an account? <a href="{{ url((isset($customer_details->company_number))?'register?CompanyNumber='.$customer_details->company_number:'register') }}" class="text-primary m-l-5"><b>Sign Up</b></a></p>
                         </div>
                     </div>
                 </form>

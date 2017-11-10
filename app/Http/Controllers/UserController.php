@@ -9,6 +9,9 @@ use View;
 use Auth;
 use DB;
 use Response;
+use Html;
+use Form;
+use Datatables;
 use App\User as User;
 use App\Mail\EmailVerification;
 use Mail;
@@ -247,5 +250,19 @@ class UserController extends Controller
             
             return Response::json(["msg"=>"Password has been changed and mail sent to user.",200]);
         }
+    }
+    public function getDatas()
+    {
+        $user = $this->UserRepo->getBy(array());
+        return Datatables::of($user)
+            //->editColumn('role_id',"{{isset($this->roles[$user->role_id])?$this->roles[$user->role_id]:''}}")
+            ->addColumn('action', function ($user) {
+                $form =  Html::decode(Form::open(["url" => url("user/$user->id"),"method"=>"delete"]));
+                return $form.'<a href=user/'.$user->id.'/edit class="btn btn-small btn-primary"><span class="glyphicon glyphicon-pencil"></span></a>
+                            <a data-userId="'.$user->id.'" href="javascript:void(0)" class="btn btn-small btn-primary reset-pass-modal"><span class="glyphicon glyphicon-lock"></span></a>
+                            <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>
+                        </form>';
+            })
+            ->make(true);
     }
 }

@@ -5,13 +5,18 @@
         <div class="white-box">
             @include('layouts.partials.notifications')
             @if (empty(Session::get('success'))) 
-            <h3 class="box-title m-b-0" style="font-size: 14px">The Art of Elysium Volunteer Registration</h3>
+            <h3 class="box-title m-b-0" style="font-size: 14px">{{isset($customer_details->company_name)?$customer_details->company_name:''}} Volunteer Registration</h3>
             <small>Enter your details below </small> 
             <form class="form-horizontal new-lg-form" role="form" method="POST" action="{{ route('register') }}">
                 {{ csrf_field() }}
                 <div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }} {{ $errors->has('last_name') ? ' has-error' : '' }}">
                     <div class="col-xs-6">
                         <input id="first_name" type="text" class="form-control" placeholder="First Name" name="first_name" value="{{ old('first_name') }}" required autofocus>
+                        @if (isset($customer_details) && !empty($customer_details))
+                            {!! Form::hidden('customer_id', $customer_details->id) !!}
+                            {!! Form::hidden('company_name', $customer_details->company_name) !!}
+                            {!! Form::hidden('company_number', $customer_details->company_number) !!}
+                        @endif
                         @if ($errors->has('first_name'))
                         <span class="help-block">
                             <strong>{{ $errors->first('first_name') }}</strong>
@@ -115,7 +120,7 @@
                 </div>
                 <div class="form-group m-b-0">
                     <div class="col-sm-12 text-center">
-                        <p>Already have an account? <a href="{{route('login')}}" class="text-danger m-l-5"><b>Sign In</b></a></p>
+                        <p>Already have an account? <a href="{{ url((isset($customer_details->company_number))?'login?CompanyNumber='.$customer_details->company_number:'login') }}" class="text-danger m-l-5"><b>Sign In</b></a></a></p>
                     </div>
                 </div>
                 

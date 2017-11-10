@@ -42,4 +42,16 @@ class EloquentHelper
             Apilog::create($input);
         }
     }
+
+    public function generateSecurityToken()
+    {
+        $securityToken = isset($_COOKIE['securityToken'])?$_COOKIE['securityToken']:'';
+        if (!empty($securityToken)) {
+            return $securityToken;
+        }
+
+        $token = bin2hex(random_bytes(12));
+        setcookie('securityToken', $token, time()+60*60*2);
+        return $token;
+    }
 }

@@ -4,7 +4,7 @@
     <div class="new-login-box">
         <div class="white-box">
             @include('layouts.partials.notifications')
-            <h3 class="box-title m-b-0">The Art of Elysium volunteer user verification </h3>
+            <h3 class="box-title m-b-0">{{isset($customer_details->company_name)?$customer_details->company_name:'The Art of Elysium'}} volunteer user verification </h3>
             <small>Enter your details below</small>
             <form class="form-horizontal new-lg-form" role="form" id="loginform" method="POST" action="{{ url("register/verify/$user->id") }}">
                 {{ csrf_field() }}

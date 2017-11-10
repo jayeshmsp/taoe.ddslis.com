@@ -12,6 +12,9 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     <!-- Bootstrap Core CSS -->
     <link href="{{asset('public/bootstrap/dist/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/fixedheader/3.1.3/css/fixedHeader.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.2.0/css/responsive.dataTables.min.css" rel="stylesheet">
     <!-- Menu CSS -->
     <link href="{{asset('public/plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.css')}}" rel="stylesheet">
     <!-- morris CSS -->
@@ -74,6 +77,10 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="{{asset('public/bootstrap/dist/js/bootstrap.min.js')}}"></script>
     <!-- Menu Plugin JavaScript -->
+    <script src="https://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/3.1.3/js/dataTables.fixedHeader.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.0/js/dataTables.responsive.min.js"></script>
+
     <script src="{{asset('public/plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.js')}}"></script>
     <!--slimscroll JavaScript -->
     <script src="{{asset('public/js/jquery.slimscroll.js')}}"></script>

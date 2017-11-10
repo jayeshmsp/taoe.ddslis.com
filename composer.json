@@ -19,6 +19,7 @@
         "skovmand/mailchimp-laravel": "1.0.8",
         "spatie/laravel-activitylog": "^2.0",
         "stripe/stripe-php": "^4.12",
+        "yajra/laravel-datatables-oracle": "~8.0",
         "zizaco/entrust": "5.2.x-dev"
     },
     "require-dev": {
