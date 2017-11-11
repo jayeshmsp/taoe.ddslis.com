@@ -9,7 +9,7 @@
             <form class="form-horizontal new-lg-form" role="form" id="loginform" method="POST" action="{{ url("register/verify/$user->id") }}">
                 {{ csrf_field() }}
                 <div class="form-group {{ $errors->has('f_name') ? ' has-error' : '' }} m-t-20">
-                    <div class="col-xs-4">
+                    <div class="col-xs-4 m-t-10 text-right">
                         <label>First Name</label>
                     </div>
                     <div class="col-xs-8">
@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div class="form-group {{ $errors->has('l_name') ? ' has-error' : '' }} m-t-20">
-                    <div class="col-xs-4">
+                    <div class="col-xs-4 m-t-10 text-right">
                         <label>Last Name</label>
                     </div>
                     <div class="col-xs-8">
@@ -36,7 +36,7 @@
                 </div>
                 
                 <div class="form-group {{ $errors->has('email') ? ' has-error' : '' }} m-t-20">
-                    <div class="col-xs-4">
+                    <div class="col-xs-4 m-t-10 text-right">
                         <label>Email Address</label>
                     </div>
                     <div class="col-xs-8">
@@ -50,7 +50,7 @@
                 </div>
                 
                 <div class="form-group {{ $errors->has('username') ? ' has-error' : '' }} m-t-20">
-                    <div class="col-xs-4">
+                    <div class="col-xs-4 m-t-10 text-right">
                         <label>Username</label>
                     </div>
                     <div class="col-xs-8">
@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="form-group {{ $errors->has('password') ? ' has-error' : '' }}">
-                    <div class="col-xs-4">
+                    <div class="col-xs-4 m-t-10 text-right">
                         <label>Password</label>
                     </div>
                     <div class="col-xs-8">
@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-xs-4">
+                    <div class="col-xs-4 text-right">
                         <label>Confirm Password</label>
                     </div>
                     <div class="col-xs-8">

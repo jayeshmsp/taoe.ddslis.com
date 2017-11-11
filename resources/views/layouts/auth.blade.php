@@ -46,6 +46,20 @@
     <script src="{{asset('public/js/custom.min.js')}}"></script>
     <!--Style Switcher -->
     <script src="{{asset('public/plugins/bower_components/styleswitcher/jQuery.style.switcher.js')}}"></script>
+    <script>
+        jQuery.browser = {};
+        (function () {
+            jQuery.browser.msie = false;
+            jQuery.browser.version = 0;
+            if (navigator.userAgent.match(/MSIE ([0-9]+)\./)) {
+                jQuery.browser.msie = true;
+                jQuery.browser.version = RegExp.$1;
+            }
+        })();
+        function cursourChangeFun(input){
+            input.setSelectionRange(0, 0);
+        }
+    </script>
 </body>
 
 </html>

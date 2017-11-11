@@ -71,7 +71,7 @@ $style = [
                                     <td style="{{ $fontFamily }} {{ $style['email-body_cell'] }}">
                                         <!-- Greeting -->
                                         <h1 style="{{ $style['header-1'] }}">
-                                            Hello {{ ucfirst($user['first_name']).' '.ucfirst($user['last_name']) }},
+                                            Hello {{ ucfirst($user['first_name']) }},
                                         </h1>
                                     
                                             <p style="{{ $style['paragraph'] }}">

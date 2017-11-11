@@ -162,7 +162,8 @@ class RegisterController extends Controller
         }else{
             $user = $this->create($inputs);
             if($request['verified_by'] == 2) {
-                $this->send_sms($request['home_contact_num'],$user->email_token, $user->name);
+                $phone_ext = !empty($request['home_contact_ext'])?filter_var($request['home_contact_ext'], FILTER_SANITIZE_NUMBER_INT):'';
+                $this->send_sms($phone_ext.$request['home_contact_num'],$user->email_token, $user->first_name);
                 
                 $url = 'code_verification/'.base64_encode($user->id);
                 if ($request->has('company_number')) {
@@ -285,6 +286,7 @@ class RegisterController extends Controller
         if(empty($phoneNumber) || empty($msg)) {
             return $response;
         }
+
         //echo  env('APP_SRC_NUMBER', ''); exit;
         $params = array(
             'src' => config('plivo.APP_SRC_NUMBER', ''),
@@ -292,6 +294,7 @@ class RegisterController extends Controller
             'text' => $msg
         );
         $response = Plivo::sendSMS($params);
+
         return $response;
     }
 
@@ -320,7 +323,7 @@ class RegisterController extends Controller
         $response = false;
         $smsText = "Hello $name,";
         $smsText .= "Thank you for registering with Art Of Elysium, Please enter following code for account verification : $token";
-        $response = $this->send_otp("91".$mobile_number,$smsText);
+        $response = $this->send_otp($mobile_number,$smsText);
         return $response;
     }
 
@@ -343,7 +346,7 @@ class RegisterController extends Controller
             $user_id = base64_decode($user_id);
             $user = User::find($user_id);
             if (!empty($user)) {
-                $this->send_sms($user->home_contact_num,$user->email_token,$user->name);
+                $this->send_sms($user->home_contact_ext.$user->home_contact_num,$user->email_token,$user->first_name);
 
                 $url = 'code_verification/'.base64_encode($user_id);
                 if ($request->has('CompanyNumber')) {
