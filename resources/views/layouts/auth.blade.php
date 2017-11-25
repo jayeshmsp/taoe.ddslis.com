@@ -21,6 +21,7 @@
     <link href="{{asset('public/css/style.css')}}" rel="stylesheet">
     <!-- color CSS -->
     <link href="{{asset('public/css/colors/default.css')}}" id="theme" rel="stylesheet">
+    <link href="{{ asset('public/css/select2.min.css') }}" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -46,7 +47,9 @@
     <script src="{{asset('public/js/custom.min.js')}}"></script>
     <!--Style Switcher -->
     <script src="{{asset('public/plugins/bower_components/styleswitcher/jQuery.style.switcher.js')}}"></script>
+    <script src="{{ asset('public/js/select2.min.js') }}"></script>
     <script>
+        //$('select').select2();
         jQuery.browser = {};
         (function () {
             jQuery.browser.msie = false;

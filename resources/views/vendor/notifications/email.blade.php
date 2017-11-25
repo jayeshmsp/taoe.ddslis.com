@@ -6,8 +6,8 @@
 @if ($level == 'error')
 # Whoops!
 @else
-@if (\Session::has('reset_username'))
-# Hello {{\Session::get('reset_username','')}}
+@if (\Session::has('reset_first_name'))
+# Hello {{\Session::get('reset_first_name','')}}
 @else
 # Hello!
 @endif

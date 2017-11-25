@@ -20,6 +20,13 @@ Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 Route::get('register/verify/{token}', 'Auth\RegisterController@verify'); 
 Route::post('register/verify/{id}', 'Auth\RegisterController@verifyStore'); 
 
+
+//SMS RESET PASSWORD
+Route::get("reset_code_verification/{user_id}",'\App\Http\Controllers\Auth\ForgotPasswordController@reset_code_verification');
+Route::get('reset/verify/{token}', 'Auth\ResetPasswordController@verifyCode'); 
+Route::post('update/password/{user_id}', 'Auth\ResetPasswordController@updatePassword'); 
+
+
 Route::get('/home', 'HomeController@index')->name('home');
 
 /*SOCIALITE AUTHENTICATION ROUTE SECTION*/
@@ -85,4 +92,5 @@ Route::get("send_otp/{id}/{msg}",'\App\Http\Controllers\Auth\RegisterController@
 Route::get("code_verification/{user_id}",'\App\Http\Controllers\Auth\RegisterController@code_verification');
 Route::get("resend-activation-token/{user_id}",'\App\Http\Controllers\Auth\RegisterController@resendActivationToken');
 Route::get("resend-activation-email/{user_id}",'\App\Http\Controllers\Auth\RegisterController@resendActivationEmail');
+
 

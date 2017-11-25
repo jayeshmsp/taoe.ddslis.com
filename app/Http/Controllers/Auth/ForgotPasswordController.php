@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 use App\User;
+Use Plivo;
 use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordController extends Controller
@@ -50,8 +51,28 @@ class ForgotPasswordController extends Controller
         
         \DB::table('password_resets')->where('email','=',$request->get('email'))->delete();
         
+
+
         if (!empty($reset_user)) {
             
+            if ($request->verified_by=='2' && empty($reset_user->home_contact_num)) {
+                return back()->with('error','We did not found mobile number for this user. please use email reset password');
+            }elseif($request->verified_by=='2'){
+                $reset_token = $this->generate_token($request->verified_by);
+                User::find($reset_user->id)->update(['email_token'=>$reset_token]);
+
+                $mobile_no = str_replace('+', '', $reset_user->home_contact_ext).$reset_user->home_contact_num;
+
+                $this->send_sms($mobile_no,$reset_token,$reset_user->first_name);
+
+                $url = 'reset_code_verification/'.base64_encode($reset_user->id);
+                if ($request->has('company_number')) {
+                    $url = 'reset_code_verification/'.base64_encode($reset_user->id).'?CompanyNumber='.$request->get('company_number');
+                }
+                return redirect($url)
+                        ->with('success','We have sent OTP to your registered mobile number, Please enter OTP');
+            }
+
             $request->session()->forget('reset_first_name');
             $request->session()->forget('reset_last_name');
 
@@ -74,6 +95,58 @@ class ForgotPasswordController extends Controller
                     ? $this->sendResetLinkResponse($response)
                     : $this->sendResetLinkFailedResponse($request, $response);
     }
+
+    /** 
+    * send OTP for account verification
+    * @return true on sent
+    */ 
+    public function send_otp($phoneNumber, $msg )
+    {
+        $response = false;
+        if(empty($phoneNumber) || empty($msg)) {
+            return $response;
+        }
+
+        //echo  env('APP_SRC_NUMBER', ''); exit;
+        $params = array(
+            'src' => config('plivo.APP_SRC_NUMBER', ''),
+            'dst' => $phoneNumber,
+            'text' => $msg
+        );
+        $response = Plivo::sendSMS($params);
+
+        return $response;
+    }
+
+    /**
+    * this function generate unique email token or mobile code 
+    * @return code or token
+    */
+    public function generate_token($method = 1) 
+    {
+        $token = '';
+        if($method == 2) {
+            $token = mt_rand(100000, 999999);
+
+        } else {
+            $token = str_random(10);
+        }
+        return $token;
+    }
+
+    /*
+    * this function set sms text and send sms to provided number 
+    * @return  true on success
+    */
+    public function send_sms($mobile_number,$token,$name)
+    {
+        $response = false;
+        $smsText = "Hello $name,";
+        $smsText .= "Please enter following code for reset password : $token";
+        $response = $this->send_otp($mobile_number,$smsText);
+        return $response;
+    }
+
     /**
      * Validate the email for the given request.
      *
@@ -108,5 +181,14 @@ class ForgotPasswordController extends Controller
     protected function sendResetLinkResponse($response)
     {
         return back()->with('status', trans($response));
+    }
+
+    /**
+    * this function return mobile code verification view 
+    * @return code_verification view 
+    */
+    public function reset_code_verification($user_id)
+    {
+        return view('auth.reset_code_verification')->with('user_id',$user_id);
     }
 }

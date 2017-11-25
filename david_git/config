@@ -1,0 +1,8 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "david"]
+	url = https://github.com/DiametricData/taoe.ddslis.com.git
+	fetch = +refs/heads/*:refs/remotes/david/*

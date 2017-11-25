@@ -79,15 +79,15 @@
                 </div> --}}
                 
                 <div class="form-group{{ $errors->has('home_contact_num') ? ' has-error' : '' }}">
-                    <div class="col-xs-4">
-                        {!! Form::text('home_contact_ext',old('home_contact_ext'),array('class'=>'form-control','placeholder'=>'Extension')) !!}
+                    <div class="col-xs-6">
+                        {!!  Form::select('home_contact_ext', config('plivo.COUNTRY_CODE'), old('home_contact_ext'), ['class'=>'form-control select2']) !!}
                         @if ($errors->has('home_contact_ext'))
                         <span class="help-block">
                             <strong>{{ $errors->first('home_contact_ext') }}</strong>
                         </span>
                         @endif
                     </div>
-                    <div class="col-xs-8 {{ $errors->has('home_contact_num') ? ' has-error' : '' }}">
+                    <div class="col-xs-6 {{ $errors->has('home_contact_num') ? ' has-error' : '' }}">
                         {!! Form::text('home_contact_num',old('home_contact_num'),array('class'=>'form-control','id'=>'home_contact_num','placeholder'=>'Phone No','data-mask'=>"999 999-9999",'onfocus' => "cursourChangeFun(this)")) !!}
                         @if ($errors->has('home_contact_num'))
                             <span class="help-block">

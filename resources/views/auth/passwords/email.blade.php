@@ -37,6 +37,16 @@
                                 @endif
                             </div>
                         </div>
+                        <div class=" form-group ">
+                            <div class="col-xs-6">
+                                {!! Form::radio('verified_by',1,true,['class'=>'radio-inline','required'=>'required','id'=>'verified_by',(old('verified_by') && old('verified_by')==1 )?'checked=checked':'']) !!}
+                                <strong>Send Email</strong>
+                            </div>
+                            <div class="col-xs-6">
+                                {!! Form::radio('verified_by',2,['class'=>'radio-inline','required'=>'required','id'=>'verified_by',(old('verified_by') && old('verified_by')==2 )?'checked=checked':'']) !!}
+                                <strong>Send SMS</strong>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="col-xs-12">
                                 <button class="btn btn-info btn-lg btn-block btn-rounded text-uppercase waves-effect waves-light" type="submit">Send Password Reset Link</button>
