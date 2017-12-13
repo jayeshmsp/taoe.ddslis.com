@@ -11,7 +11,7 @@
                 {{ csrf_field() }}
                 <div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }} {{ $errors->has('last_name') ? ' has-error' : '' }}">
                     <div class="col-xs-6">
-                        <input id="first_name" type="text" class="form-control" placeholder="First Name" name="first_name" value="{{ old('first_name') }}" required autofocus>
+                        {!! Form::text('first_name',old('first_name',request('FirstName')),['class'=>'form-control','placeholder'=>'First Name','id'=>'first_name','required'=>'required','autofocus']) !!}
                         @if (isset($customer_details) && !empty($customer_details))
                             {!! Form::hidden('customer_id', $customer_details->id) !!}
                             {!! Form::hidden('company_name', $customer_details->company_name) !!}
@@ -24,7 +24,7 @@
                         @endif
                     </div>
                     <div class="col-xs-6">
-                        <input id="last_name" type="text" class="form-control" name="last_name" value="{{ old('last_name') }}" required autofocus placeholder="Last Name">
+                        {!! Form::text('last_name',old('last_name',request('LastName')),['class'=>'form-control','placeholder'=>'Last Name','id'=>'last_name','required'=>'required','autofocus']) !!}
                         @if ($errors->has('last_name'))
                         <span class="help-block">
                             <strong>{{ $errors->first('last_name') }}</strong>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                     <div class="col-xs-12">
-                        <input id="email" type="text" class="form-control" name="email" value="{{ old('email') }}" placeholder="{{ ucfirst('email') }}">
+                        {!! Form::text('email',old('email',request('Email')),['class'=>'form-control','placeholder'=>'Email','id'=>'email','required'=>'required','autofocus']) !!}
                         @if ($errors->has('email'))
                         <span class="help-block">
                             <strong>{{ $errors->first('email') }}</strong>
@@ -42,24 +42,6 @@
                         @endif
                     </div>
                 </div>
-                <!--<div class="form-group{{ $errors->has('home_contact_num') ? ' has-error' : '' }}">
-                    <div class="col-xs-4">
-                        {!! Form::text('home_contact_ext',old('home_contact_ext'),array('class'=>'form-control contact-text','placeholder'=>'Extension')) !!}
-                        @if ($errors->has('home_contact_ext'))
-                        <span class="help-block">
-                            <strong>{{ $errors->first('home_contact_ext') }}</strong>
-                        </span>
-                        @endif
-                    </div>
-                    <div class="col-xs-8">
-                        {!! Form::text('home_contact_num',old('home_contact_num'),array('class'=>'form-control','placeholder'=>'Phone No','data-mask'=>"999 999-9999")) !!}
-                        @if ($errors->has('home_contact_num'))
-                        <span class="help-block">
-                            <strong>{{ $errors->first('home_contact_num') }}</strong>
-                        </span>
-                        @endif
-                    </div>
-                </div> -->
 
                 {{-- 5.2. Remove Password and Confirm Password from this page – it will be on a separate page. --}}
                 {{-- <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
@@ -88,7 +70,7 @@
                         @endif
                     </div>
                     <div class="col-xs-6 {{ $errors->has('home_contact_num') ? ' has-error' : '' }}">
-                        {!! Form::text('home_contact_num',old('home_contact_num'),array('class'=>'form-control','id'=>'home_contact_num','placeholder'=>'Phone No','data-mask'=>"999 999-9999",'onfocus' => "cursourChangeFun(this)")) !!}
+                        {!! Form::text('home_contact_num',old('home_contact_num'),array('class'=>'form-control','id'=>'contact_number','placeholder'=>'Mobile Phone No.','data-mask'=>"999 999-9999",'onfocus' => "cursourChangeFun(this)")) !!}
                         @if ($errors->has('home_contact_num'))
                             <span class="help-block">
                                 <strong>{{ $errors->first('home_contact_num') }}</strong>
@@ -99,11 +81,15 @@
                 
                 <div class=" form-group ">
                     <div class="col-xs-6">
-                        {!! Form::radio('verified_by',1,true,['class'=>'radio-inline','required'=>'required','id'=>'verified_by',(old('verified_by') && old('verified_by')==1 )?'checked=checked':'']) !!}
+                        {!! Form::radio('verified_by',1,true,['class'=>'radio-inline email_varification','required'=>'required','id'=>'verified_by',(old('verified_by') && old('verified_by')==1 )?'checked=checked':'']) !!}
                         <strong>Email verification</strong>
                     </div>
                     <div class="col-xs-6">
-                        {!! Form::radio('verified_by',2,['class'=>'radio-inline','required'=>'required','id'=>'verified_by',(old('verified_by') && old('verified_by')==2 )?'checked=checked':'']) !!}
+                        @if (old('verified_by')==2)
+                            <input checked="checked" type="radio" name="verified_by" value="2" class="radio-inline mobile_varification" required='required' id='verified_by'>
+                        @else
+                            <input type="radio" name="verified_by" value="2" class="radio-inline mobile_varification" required='required' id='verified_by'>
+                        @endif
                         <strong>Mobile verification</strong>
                     </div>
                 </div>
@@ -136,5 +122,22 @@
         </div>
     </div>
 </section>
+<script src="{{asset('public/plugins/bower_components/jquery/dist/jquery.min.js')}}"></script>
+<script type="text/javascript">
+    $("#contact_number").keyup(function(){
+        var contact_number = $(this).val() || '';
+        if (contact_number!='___ ___-____') {
+            $(".mobile_varification").prop("checked", true);
+        }else{
+            $(".email_varification").prop("checked", true);
+        }
+    });
 
+    $("#contact_number").blur(function(){
+        var contact_number = $(this).val() || '';
+        if (contact_number.indexOf("_") >= 0) {
+            $(".email_varification").prop("checked", true);   
+        }
+    });
+</script>
 @endsection

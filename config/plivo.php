@@ -36,7 +36,6 @@ return array(
 
     'COUNTRY_CODE' => [
         "1" => "USA (+1)",
-        "+1" =>"Canada (+1)",
         "213" =>"Algeria (+213)",
         "376" =>"Andorra (+376)",
         "244" =>"Angola (+244)",

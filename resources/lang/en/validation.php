@@ -119,6 +119,7 @@ return [
     'attributes' => [],
 
     'alpha_space' =>'The :attribute may only contain letters and spaces.',
+    'email_name_username_validation' =>'User already exists.',
     'verify_choosen_method' =>'Phone number field is required',
     'captcha' => 'The :attribute field is required.',
     'is_user_exist' => 'User is already register.'

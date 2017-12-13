@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 use App\Setting;
+use App\User;
 use DB;
 
 class AppServiceProvider extends ServiceProvider
@@ -74,6 +76,25 @@ class AppServiceProvider extends ServiceProvider
                }
                return $return;
                
+        });
+
+        Validator::extend('email_name_username_validation', function($attribute, $value, $parameters, $validator) {
+            $input = $validator->getData();
+            if (!empty($input)) {
+                $user =   User::where('first_name','=',$input['first_name'])
+                                ->where('last_name','=',$input['last_name'])
+                                ->where('email','=',$input['email'])
+                                ->first();
+
+                if (isset($user->username)) {
+                    if (!empty($user->username)) {
+                       return false; 
+                    }else{
+                        return true;
+                    }
+                }
+            }
+            return true;
         });
         
     }

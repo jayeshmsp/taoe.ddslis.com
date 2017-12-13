@@ -66,8 +66,9 @@ class RegisterController extends Controller
         $rules = [
             'first_name' => 'required|string|alpha_space|max:255',
             'last_name' => 'required|string|alpha_space|max:255',
-            'email' => 'required|string|email|max:255|is_user_exist:users,name,'.$data['first_name']." ".$data['last_name'],
-            //'email' => 'required|string|email|max:255',
+            //'email' => 'required|string|email|max:255|is_user_exist:users,name,'.$data['first_name']." ".$data['last_name'],
+            'email' => 'required|string|email|max:255',
+            
             'verified_by' => 'required|verify_choosen_method:'.$data['email'].",".$data['home_contact_num'],
             'g-recaptcha-response' => 'required|captcha',
         ];
@@ -127,6 +128,17 @@ class RegisterController extends Controller
                         ->withInput();
             //$this->throwValidationException($request, $validator);
         }
+
+        $validator1 = Validator::make($inputs, ['email'=>'email_name_username_validation']);
+        if ($validator1->fails()) 
+        {   
+            $back_url = isset($inputs['company_number'])?'login?CompanyNumber='.$inputs['company_number']:'login';
+            return redirect($back_url)
+                        ->with('error','User already exists with same details, Please login')
+                        ->withErrors($validator1)
+                        ->withInput();
+        }
+
         $user_exists= User::where('first_name','=',$request->get('first_name'))
                             ->where('last_name','=',$request->get('last_name'))
                             ->where('email','=',$request->get('email'))
@@ -134,7 +146,7 @@ class RegisterController extends Controller
         
         $securityToken = $this->EloquentHelper->generateSecurityToken();
 
-        if (!empty($user_exists) && !empty($user_exists->contact_id) && strtolower($user_exists->status) == 'completed' ) {
+        if ( !empty($user_exists->username) && !empty($user_exists) && !empty($user_exists->contact_id) && strtolower($user_exists->status) == 'completed' ) {
             
             $salesforce_dashboard_url = str_replace('[CONTACT_ID]', $user_exists->contact_id, $this->setting_details->salesforce_dashboard_url);
             $salesforce_dashboard_url = str_replace('[UID]', $user_exists->id, $salesforce_dashboard_url);
@@ -146,7 +158,7 @@ class RegisterController extends Controller
             $salesforce_dashboard_url = $salesforce_dashboard_url.'&DAIS_tag='.$securityToken;
 
             return redirect($salesforce_dashboard_url);   
-        }elseif (!empty($user_exists)) {
+        }elseif (!empty($user_exists->username) && !empty($user_exists)) {
             //$salesforce_application_page_url = str_replace('[CONTACT_ID]', $user_exists->contact_id, $this->setting_details->salesforce_application_page_url);
             $salesforce_application_page_url = str_replace('&id=[CONTACT_ID]', '', $this->setting_details->salesforce_application_page_url);
             $salesforce_application_page_url = str_replace('[FNAME]', $user_exists->first_name, $salesforce_application_page_url);

@@ -43,7 +43,12 @@
                                 <strong>Send Email</strong>
                             </div>
                             <div class="col-xs-6">
-                                {!! Form::radio('verified_by',2,['class'=>'radio-inline','required'=>'required','id'=>'verified_by',(old('verified_by') && old('verified_by')==2 )?'checked=checked':'']) !!}
+                                @if (old('verified_by')==2)
+                                    {!! Form::radio('verified_by',2,['class'=>'radio-inline','required'=>'required','id'=>'verified_by',(old('verified_by') && old('verified_by')==2 )?'checked=checked':'']) !!}
+                                @else
+                                    {!! Form::radio('verified_by',2,['class'=>'radio-inline','required'=>'required','id'=>'verified_by']) !!}
+                                @endif                                
+                                
                                 <strong>Send SMS</strong>
                             </div>
                         </div>
