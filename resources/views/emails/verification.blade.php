@@ -77,7 +77,7 @@ $style = [
                                         <!-- Intro -->
                                        
                                             <p style="{{ $style['paragraph'] }}">
-                                                Click on the below button to verify your email address 
+                                                Click on the button below to verify your email address:
                                             </p>
                                         
 
@@ -103,8 +103,7 @@ $style = [
                                                     </td>
                                                 </tr>
                                             </table>
-                                    
-
+                                            
                                         <!-- Outro -->
                                         
                                             <p style="{{ $style['paragraph'] }}">
@@ -121,7 +120,20 @@ $style = [
                             </table>
                         </td>
                     </tr>
-
+                    <tr>
+                        <td>
+                            <table style="{{ $style['email-footer'] }}" align="center" width="570" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="{{ $fontFamily }} {{ $style['email-footer_cell'] }}">
+                                        <p style="{{ $style['paragraph-sub'] }}">
+                                            If you’re having trouble clicking the verify button, copy and paste the URL below
+                                            into your web browser: <a href="{{ url($url) }}">{{ url($url) }}</a> 
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
                     <!-- Footer -->
                     <tr>
                         <td>

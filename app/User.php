@@ -24,7 +24,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name', 'email', 'password', 'provider', 'provider_id','email_token','verified','username','last_login','interest','skill','mobile_contact_num','work_contact_num','home_contact_num',
         'address','is_profile_updated','first_name','last_name','city','state','zipcode','zipcode_ext','mobile_contact_ext','work_contact_ext','home_contact_ext',
-        'dob','gender','is_logged_in','platform','contact_id','status','verified_by','customer_id'
+        'dob','gender','is_logged_in','platform','contact_id','status','verified_by','customer_id','homeemail','alternateemail','workemail'
     ];
 
     protected static $logAttributes = ['name', 'email', 'password', 'provider', 'provider_id','email_token','verified','username','last_login','interest','skill','mobile_contact_num','work_contact_num','home_contact_num',

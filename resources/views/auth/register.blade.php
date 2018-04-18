@@ -106,7 +106,7 @@
                 </div>
                 <div class="form-group m-b-0">
                     <div class="col-sm-12 text-center">
-                        <p>Already have an account? <a href="{{ url((isset($customer_details->company_number))?'login?CompanyNumber='.$customer_details->company_number:'login') }}" class="text-danger m-l-5"><b>Sign In</b></a></a></p>
+                        <p>Already have an account? <a href="{{ url((isset($customer_details->company_number))?'login?CompanyNumber='.$customer_details->company_number:'login') }}" class="text-primary m-l-5"><b>Sign In</b></a></a></p>
                     </div>
                 </div>
                 

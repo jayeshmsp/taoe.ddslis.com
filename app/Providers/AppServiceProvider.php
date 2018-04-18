@@ -30,7 +30,8 @@ class AppServiceProvider extends ServiceProvider
 
         //Add this custom validation rule.
         Validator::extend('alpha_space', function ($attribute, $value) {
-            return preg_match('/^[\pL\s]+$/u', $value); 
+            return true; 
+            //return preg_match('/^[\pL\s]+$/u', $value); 
         });
 
         \Schema::defaultStringLength(191);
@@ -83,9 +84,11 @@ class AppServiceProvider extends ServiceProvider
             if (!empty($input)) {
                 $user =   User::where('first_name','=',$input['first_name'])
                                 ->where('last_name','=',$input['last_name'])
-                                ->where('email','=',$input['email'])
-                                ->first();
+                                ->where(function ($query) use ($input)  {
+                                  $query->where('email', '=',$input['email'])->orWhere('alternateemail','=',$input['email']) ->orWhere('workemail','=',$input['email'])->orWhere('homeemail','=',$input['email']);
+                                 })->first();
 
+                          
                 if (isset($user->username)) {
                     if (!empty($user->username)) {
                        return false; 

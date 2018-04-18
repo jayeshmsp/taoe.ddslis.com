@@ -56,6 +56,12 @@
 Regards,<br>{{ config('app.name') }}
 @endif
 
+<?php 
+    if (\Session::has('reset_user_id')){
+        $actionUrl = $actionUrl.'?q='.encrypt(\Session::get('reset_user_id'));
+    }
+?>
+
 <!-- Subcopy -->
 @isset($actionText)
 @component('mail::subcopy')

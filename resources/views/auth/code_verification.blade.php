@@ -30,11 +30,16 @@
                         <label>Send Email Activation Link<a class="text-left" href='{{url(isset($customer_details->company_number)?"resend-activation-email/$user_id?CompanyNumber=$customer_details->company_number":"resend-activation-email/$user_id")}}'> Here</a></label>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom: 5px;">
                     <div class="form-group text-center m-t-20">
                         <div class="col-xs-12">
                             <button class="btn btn-info btn-lg btn-block btn-rounded text-uppercase waves-effect waves-light" type="submit">Submit</button>
                         </div>
+                    </div>
+                </div>
+                 <div class="row">
+                    <div class="col-md-12 col-xs-12 m-t-10">
+                        <a href="{{ url('login') }}" class="text-primary pull-right"><b>Sign In</b></a> 
                     </div>
                 </div>
                 </form>

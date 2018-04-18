@@ -237,6 +237,11 @@ class RegisterController extends Controller
         ]);
         User::where('id',$id)->firstOrFail()->verified();
         $user = User::where('id',$id)->first();
+        
+        \Session::put('username_fill', $user->username);
+
+        return redirect('login');
+
         //Auth::loginUsingId($id);
         $salesforce_application_page_url = str_replace('&id=[CONTACT_ID]', '', $this->setting_details->salesforce_application_page_url);
 

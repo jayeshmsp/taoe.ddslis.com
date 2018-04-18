@@ -13,11 +13,16 @@
             @endif
             <h3 class="box-title m-b-0"> {{isset($customer_details->company_name)?$customer_details->company_name:''}} Volunteer Login</h3>
             <small>Enter your details below</small>
-            <form class="form-horizontal new-lg-form" role="form" id="loginform" method="POST" action="{{ route('login') }}">
+            <form class="form-horizontal new-lg-form" role="form" id="loginform" method="POST" action="{{ route('login') }}" autocomplete="off">
                 {{ csrf_field() }}
                 <div class="form-group {{ $errors->has('username') ? ' has-error' : '' }} m-t-20">
                     <div class="col-xs-12">
-                        <input placeholder="Username" id="username" type="text" class="form-control" name="username" value="{{ old('username') }}" required autofocus>
+                        @if (Session::has('username_fill'))
+                            <input autocomplete="off" placeholder="Username" id="username" type="text" class="form-control" name="username" value="{{ Session::get('username_fill') }}" required autofocus>
+                            <?php Session::remove('username_fill'); ?>
+                        @else
+                            <input autocomplete="off" placeholder="Username" id="username" type="text" class="form-control" name="username" value="{{ old('username','') }}" required autofocus>
+                        @endif
                         @if (isset($customer_details) && !empty($customer_details) )
                             {!! Form::hidden('customer_id', $customer_details->id) !!}
                             {!! Form::hidden('company_number', $customer_details->company_number) !!}
@@ -32,7 +37,7 @@
                 </div>
                 <div class="form-group {{ $errors->has('password') ? ' has-error' : '' }}">
                     <div class="col-xs-12">
-                        <input placeholder="Enter password" id="password"  class="form-control" name="password" required type="password">
+                        <input autocomplete="off" placeholder="Enter password" id="password"  class="form-control" name="password" required type="password">
                         @if ($errors->has('password'))
                         <span class="help-block">
                             <strong>{{ $errors->first('password') }}</strong>

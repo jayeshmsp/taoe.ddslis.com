@@ -64,9 +64,14 @@
                             @endif
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: 5px;">
                         <div class="col-xs-12">
                             <button class="btn btn-info btn-lg btn-block btn-rounded text-uppercase waves-effect waves-light" type="submit">Reset Password</button>
+                        </div>
+                    </div>
+                     <div class="row">
+                        <div class="col-md-12 col-xs-12 m-t-10">
+                            <a href="{{ url('login') }}" class="text-primary pull-right"><b>Sign In</b></a> 
                         </div>
                     </div>
                 </form>

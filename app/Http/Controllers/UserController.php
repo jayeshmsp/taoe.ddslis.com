@@ -148,6 +148,9 @@ class UserController extends Controller
             unset($rules['password']);
         }
         $rules['email']= 'required|string|email|max:255|is_user_exist:users,name,'.$data['first_name']." ".$data['last_name']. ",".$id;
+        $rules['homeemail']="email|max:255";
+        $rules['alternateemail']="email|max:255";
+        $rules['workemail']="email|max:255";
         // Create a new validator instance from our validation rules
         $validator = Validator::make($inputs, $rules);
 

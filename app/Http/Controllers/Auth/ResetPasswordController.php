@@ -130,6 +130,10 @@ class ResetPasswordController extends Controller
         if (\Session::has('showResetForm_user_id')){
             $user_details = User::find(\Session::get('showResetForm_user_id'));
 
+            \Session::put('username_fill', $user_details->username);
+
+            return redirect('login')->with('username_fill',$user_details->username);
+
             $securityToken = $this->EloquentHelper->generateSecurityToken();
             
             if (!empty($user_details->contact_id) && strtolower($user_details->status)=='completed' ) {

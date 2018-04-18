@@ -98,7 +98,53 @@ class UserController extends Controller
         if (isset($inputs['FirstName']) && isset($inputs['LastName']) && isset($inputs['EmailAddress']) ) {
             if (!empty($inputs['FirstName']) && !empty($inputs['LastName']) && !empty($inputs['EmailAddress']) ) {
                 //SEARCH USER
-                $user_exists = User::where('first_name','=',$inputs['FirstName'])->where('last_name', '=', $inputs['LastName'])->where('email', '=' ,$inputs['EmailAddress'])->first();
+                //$user_exists = User::where('first_name','=',$inputs['FirstName'])->where('last_name', '=', $inputs['LastName'])->where('email', '=' ,$inputs['EmailAddress'])->first();
+              /*  
+                $user_exists = User::where('first_name1','=',$inputs['FirstName'])
+                            ->where('last_name', '=', $inputs['LastName'])
+                            ->Where('email', '=' ,$inputs['EmailAddress'])
+                            ->orWhere('email', '=' ,$inputs['EMAIL0'])
+                            ->orWhere('email', '=' ,$inputs['EMAIL1'])
+                            ->orWhere('email', '=' ,$inputs['EMAIL2'])
+                            ->orWhere('homeemail', '=' ,$inputs['EmailAddress'])
+                            ->orWhere('homeemail', '=' ,$inputs['EMAIL0'])
+                            ->orWhere('homeemail', '=' ,$inputs['EMAIL1'])
+                            ->orWhere('homeemail', '=' ,$inputs['EMAIL2'])
+                            ->orWhere('alternateemail', '=' ,$inputs['EmailAddress'])
+                            ->orWhere('alternateemail', '=' ,$inputs['EMAIL0'])
+                            ->orWhere('alternateemail', '=' ,$inputs['EMAIL1'])
+                            ->orWhere('alternateemail', '=' ,$inputs['EMAIL2'])
+                            ->orWhere('workemail', '=' ,$inputs['EmailAddress'])
+                            ->orWhere('workemail', '=' ,$inputs['EMAIL0'])
+                            ->orWhere('workemail', '=' ,$inputs['EMAIL1'])
+                            ->orWhere('workemail', '=' ,$inputs['EMAIL2'])->first();*/
+
+
+
+             $user_exists = User::where('first_name','=',$inputs['FirstName'])
+                                ->where('last_name','=',$inputs['LastName'])
+                                ->where(function ($query) use ($inputs)  {
+                                  $query->where('email', '=',$inputs['EmailAddress'])
+                                  ->orWhere('email','=',$inputs['EMAIL0']) 
+                                  ->orWhere('email','=',$inputs['EMAIL1'])
+                                  ->orWhere('email','=',$inputs['EMAIL2'])
+                                  ->orWhere('homeemail','=',$inputs['EmailAddress']) 
+                                  ->orWhere('homeemail','=',$inputs['EMAIL0'])
+                                  ->orWhere('homeemail','=',$inputs['EMAIL1'])
+                                  ->orWhere('homeemail','=',$inputs['EMAIL2'])
+                                  ->orWhere('alternateemail','=',$inputs['EmailAddress']) 
+                                  ->orWhere('alternateemail','=',$inputs['EMAIL0'])
+                                  ->orWhere('alternateemail','=',$inputs['EMAIL1'])
+                                  ->orWhere('alternateemail','=',$inputs['EMAIL2'])
+                                  ->orWhere('workemail','=',$inputs['EmailAddress']) 
+                                  ->orWhere('workemail','=',$inputs['EMAIL0'])
+                                  ->orWhere('workemail','=',$inputs['EMAIL1'])
+                                  ->orWhere('workemail','=',$inputs['EMAIL2']);
+                                 })->first();
+
+
+
+
                 if (!empty($user_exists)) {
                     $this->content['UserID'] = $user_exists->id;
                     $this->content['ContactID'] = (isset($inputs['ContactID'])?$inputs['ContactID']:'');
@@ -115,6 +161,9 @@ class UserController extends Controller
                         'contact_id' => (isset($inputs['ContactID'])?$inputs['ContactID']:''),
                         'status' => (isset($inputs['ApplicationStatus'])?$inputs['ApplicationStatus']:''),
                         'verified' => DB::raw('"1"'),
+                        'homeemail' => $inputs['EMAIL0'],
+                        'alternateemail' => $inputs['EMAIL1'],
+                        'workemail' => $inputs['EMAIL2'],
                     ])->getKey();
                     
                     $this->content['UserID'] = $user_id;
@@ -214,7 +263,10 @@ class UserController extends Controller
                 'first_name'=>$inputs['FirstName'],
                 'last_name'=>$inputs['LastName'],
                 'name'=>$inputs['FirstName'].' '.$inputs['LastName'],
-                'status'=> isset($inputs['ApplicationStatus']) ? $inputs['ApplicationStatus'] : null
+                'status'=> isset($inputs['ApplicationStatus']) ? $inputs['ApplicationStatus'] : null,
+                'homeemail' => $inputs['EMAIL0'],
+                'alternateemail' => $inputs['EMAIL1'],
+                'workemail' => $inputs['EMAIL2']
             ]);
             if($from_create == 1) {
                 $this->content['ResultCode'] = 1;

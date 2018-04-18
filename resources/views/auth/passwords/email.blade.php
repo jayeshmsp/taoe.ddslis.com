@@ -39,24 +39,29 @@
                         </div>
                         <div class=" form-group ">
                             <div class="col-xs-6">
-                                {!! Form::radio('verified_by',1,true,['class'=>'radio-inline','required'=>'required','id'=>'verified_by',(old('verified_by') && old('verified_by')==1 )?'checked=checked':'']) !!}
+                                {!! Form::radio('verified_by',1,true,['class'=>'radio-inline email_varification','required'=>'required','id'=>'verified_by',(old('verified_by') && old('verified_by')==1 )?'checked=checked':'']) !!}
                                 <strong>Send Email</strong>
                             </div>
                             <div class="col-xs-6">
                                 @if (old('verified_by')==2)
-                                    {!! Form::radio('verified_by',2,['class'=>'radio-inline','required'=>'required','id'=>'verified_by',(old('verified_by') && old('verified_by')==2 )?'checked=checked':'']) !!}
+                                <input checked="checked" type="radio" name="verified_by" value="2" class="radio-inline mobile_varification" required='required' id='verified_by'>
                                 @else
-                                    {!! Form::radio('verified_by',2,['class'=>'radio-inline','required'=>'required','id'=>'verified_by']) !!}
-                                @endif                                
-                                
-                                <strong>Send SMS</strong>
+                                <input type="radio" name="verified_by" value="2" class="radio-inline mobile_varification" required='required' id='verified_by'>
+                                @endif
+                                <strong>Send Text</strong>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="margin-bottom: 5px;">
                             <div class="col-xs-12">
                                 <button class="btn btn-info btn-lg btn-block btn-rounded text-uppercase waves-effect waves-light" type="submit">Send Password Reset Link</button>
                             </div>
                         </div>
+                         <div class="row">
+                            <div class="col-md-12 col-xs-12 m-t-10">
+                                <a href="{{ url('login') }}" class="text-primary pull-right"><b>Sign In</b></a> 
+                            </div>
+                        </div>
+
                     </form>
                 @endif
             </div>

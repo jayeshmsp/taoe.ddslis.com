@@ -44,6 +44,9 @@ class UserRepo
 		$user->platform  = 'art-of-elysium';
 		$user->name  = $data['first_name'].' '.$data['last_name'];
 		$user->email  = $data['email'];
+		$user->homeemail  = $data['homeemail'];
+		$user->alternateemail  = $data['alternateemail'];
+		$user->workemail  = $data['workemail'];
 		$user->username = isset($data['username']) ? $data['username'] : '';
 		if(isset($data['contact_id']) && !empty($data['contact_id'])) {
         	$user->status = 'Completed';
@@ -78,6 +81,10 @@ class UserRepo
 		$user->last_name  = $data['last_name'];
 		$user->name  = $data['first_name'].' '.$data['last_name'];
 		$user->email  = $data['email'];
+		$user->homeemail  = $data['homeemail'];
+		$user->alternateemail  = $data['alternateemail'];
+		$user->workemail  = $data['workemail'];
+		
 		if(isset($data['contact_id']) && !empty($data['contact_id'])) {
         	$user->status = 'Completed';
         	$user->contact_id = $data['contact_id'];
